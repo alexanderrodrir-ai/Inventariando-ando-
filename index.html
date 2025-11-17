@@ -1,150 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: #cfe8ff;
-      color: #1a1a1a;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 15px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-    button {
-      background: #6a5acd;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #7b6df2;
-    }
-    .informe {
-      margin-top: 20px;
-      background: #f0f6ff;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
-    }
-  #pantalonSection { display:none; margin-top:12px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Inventariando Ando</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8f1ff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: #1f3c88;
+            margin-bottom: 25px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #c7d7ff;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.05);
+        }
+
+        label {
+            font-weight: 500;
+            color: #1f3c88;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #b9c9ff;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1f66e5;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #154bb3;
+        }
+
+        #resultado {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 2px solid #c7d7ff;
+            border-radius: 15px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1 style="font-family: 'Poppins', sans-serif; font-size: 42px; letter-spacing: 2px;">📦 Inventariando Ando</h1>
 
-    <label>Producto</label>
-    <input type="text" id="producto" placeholder="Nombre del producto" />
+    <h1>Inventariando Ando</h1>
 
-    <label>Cantidad</label>
-    <input type="number" id="cantidad" placeholder="Cantidad" />
+    <div class="container">
 
-    <label>Talla</label>
-    <select id="talla">
-      <option value="S">S</option>
-      <option value="M">M</option>
-      <option value="L">L</option>
-      <option value="XL">XL</option>
-    </select>
+        <label>Producto:</label>
+        <input id="producto" type="text" placeholder="Ej: Camiseta, Pantalón, Zapatos">
 
-    <button onclick="agregarProducto()">Agregar al Inventario</button>
-    <button onclick="generarInforme()" style="background:#4caf50; margin-top:10px;">Generar Informe</button>
+        <label>Cantidad:</label>
+        <input id="cantidad" type="number" placeholder="Ej: 5">
 
-    <div id="informe" class="informe"></div>
-  </div>
+        <label>Talla:</label>
+        <input id="talla" type="text" placeholder="Ej: M, L, 38, etc.">
 
-  <script>
-    let inventario = [];
+        <button onclick="agregarProducto()">Agregar Producto</button>
+        <button onclick="generarInforme()">Generar Informe</button>
+    </div>
 
-    function agregarProducto() {
-      const producto = document.getElementById("producto").value.trim().toLowerCase();
-      const cantidad = parseInt(document.getElementById("cantidad").value);
-      const talla = document.getElementById("talla").value;
-      const pantalonActivo = document.getElementById("pantalonSection") && document.getElementById("pantalonSection").style.display === 'block';
-      const tallaPantalon = pantalonActivo ? document.getElementById("tallaPantalon").value : null;
+    <div id="resultado"></div>
 
-      if (!producto || !cantidad) {
-        alert("Por favor completa todos los campos.");
-        return;
-      }
+    <script>
+        let inventario = [];
 
-      inventario.push({ producto, cantidad, talla, tallaPantalon });
-      alert("Producto agregado correctamente ✔️");
+        function agregarProducto() {
+            let producto = document.getElementById("producto").value.trim().toLowerCase();
+            let cantidad = parseInt(document.getElementById("cantidad").value);
+            let talla = document.getElementById("talla").value.trim();
 
-      document.getElementById("producto").value = "";
-      document.getElementById("cantidad").value = "";
-      document.getElementById("talla").value = "S";
-      if (document.getElementById("tallaPantalon")) document.getElementById("tallaPantalon").value = "28";
-    }
+            if (producto === "" || isNaN(cantidad) || talla === "") {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
 
-    function generarInforme() {
-      if (inventario.length === 0) {
-        alert("No hay productos en el inventario.");
-        return;
-      }
+            inventario.push({ 
+                producto: producto,
+                cantidad: cantidad,
+                talla: talla
+            });
 
-      let totales = {};
-
-      inventario.forEach(item => {
-        const key = item.producto.toLowerCase();
-        if (!totales[key]) totales[key] = [];
-        totales[key].push(item);
-      });
-
-      let html = "<h2>📊 Informe de Inventario</h2>";
-
-      for (let prod in totales) {
-        html += `<h3 style='margin-top:15px;'>${prod.toUpperCase()}</h3>`;
-        totales[prod].forEach(item => {
-          html += `<p>🟦 Cantidad: <strong>${item.cantidad}</strong> | Talla: <strong>${item.talla}</strong> ${item.tallaPantalon ? `| Talla pantalón: <strong>${item.tallaPantalon}</strong>` : ''}</p>`;
-        });
-      }
-
-      const informeDiv = document.getElementById("informe");
-      informeDiv.innerHTML = html;
-      informeDiv.style.display = "block";
-    }
-
-    function generarInforme() {
-      if (inventario.length === 0) {
-        alert("No hay productos en el inventario.");
-        return;
-      }
-
-      let totales = {};
-
-      inventario.forEach(item => {
-        if (!totales[item.producto]) {
-          totales[item.producto] = 0;
+            alert("Producto agregado correctamente ✔");
+            document.getElementById("producto").value = "";
+            document.getElementById("cantidad").value = "";
+            document.getElementById("talla").value = "";
         }
-        totales[item.producto] += item.cantidad;
-      });
 
-      let html = "<h2>📊 Informe de Inventario</h2>";
-      for (let prod in totales) {
-        html += `<p><strong>${prod}:</strong> ${totales[prod]} unidades</p>`;
-      }
+        function generarInforme() {
+            if (inventario.length === 0) {
+                alert("No hay productos en el inventario.");
+                return;
+            }
 
-      const informeDiv = document.getElementById("informe");
-      informeDiv.innerHTML = html;
-      informeDiv.style.display = "block";
-    }
-  </script>
+            let resumen = {};
+
+            // Agrupar productos ignorando mayúsculas/minúsculas
+            inventario.forEach(item => {
+                let key = item.producto;
+
+                if (!resumen[key]) {
+                    resumen[key] = [];
+                }
+
+                resumen[key].push({
+                    cantidad: item.cantidad,
+                    talla: item.talla
+                });
+            });
+
+            let html = `<h3>Informe del Inventario</h3>`;
+            html += "<ul>";
+
+            for (let prod in resumen) {
+                html += `<li><strong>${prod.toUpperCase()}</strong><ul>`;
+                resumen[prod].forEach(x => {
+                    html += `<li>Cantidad: ${x.cantidad} — Talla: ${x.talla}</li>`;
+                });
+                html += "</ul></li>";
+            }
+
+            html += "</ul>";
+
+            let resultado = document.getElementById("resultado");
+            resultado.innerHTML = html;
+            resultado.style.display = "block";
+        }
+    </script>
+
 </body>
 </html>
