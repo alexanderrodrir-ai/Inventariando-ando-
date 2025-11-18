@@ -1,165 +1,217 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Inventariando Ando</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inventariando Ando</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --blue:#1e88e5;
+      --blue-600:#154bb3;
+      --bg:#e8f6ff;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#c7e0ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:18px; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:var(--bg); color:#0f172a;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #e8f1ff;
-            margin: 0;
-            padding: 20px;
-        }
+    .wrap{max-width:760px;margin:12px auto;padding:18px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+    h1{font-size:28px;margin:0;color:var(--blue);letter-spacing:0.6px}
+    .subtitle{color:var(--muted);font-size:13px}
 
-        h1 {
-            text-align: center;
-            font-size: 40px;
-            font-weight: 700;
-            color: #1f3c88;
-            margin-bottom: 25px;
-        }
+    .card{background:var(--card);border-radius:14px;padding:18px;border:1px solid var(--accent);box-shadow:0 8px 20px rgba(16,24,40,0.06)}
 
-        .container {
-            max-width: 500px;
-            margin: auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #c7d7ff;
-            box-shadow: 0px 0px 20px rgba(0,0,0,0.05);
-        }
+    form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    label{display:block;font-weight:600;color:var(--blue);font-size:13px;margin-bottom:6px}
+    input[type=text], input[type=number], select{width:100%;padding:10px;border-radius:10px;border:1px solid #dbeafe;background:#fff;font-size:14px}
 
-        label {
-            font-weight: 500;
-            color: #1f3c88;
-        }
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .btn{flex:1;padding:12px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--accent)}
+    .btn.small{padding:8px;font-size:14px;border-radius:8px}
+    .btn:active{transform:translateY(1px)}
 
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #b9c9ff;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            font-size: 15px;
-        }
+    /* lista / informe */
+    #lista{margin-top:16px}
+    .item{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #eef5ff;margin-bottom:10px}
+    .meta{display:flex;gap:12px;align-items:center}
+    .badge{background:var(--accent);padding:6px 8px;border-radius:8px;font-weight:600;color:var(--blue)}
+    .info{font-size:14px}
+    .info small{display:block;color:var(--muted);font-weight:500}
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #1f66e5;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
+    .tools{display:flex;gap:8px}
+    .tool-btn{background:transparent;border:1px solid var(--blue);color:var(--blue);padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700}
 
-        button:hover {
-            background-color: #154bb3;
-        }
-
-        #resultado {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #ffffff;
-            border: 2px solid #c7d7ff;
-            border-radius: 15px;
-            display: none;
-        }
-    </style>
+    /* responsive */
+    @media (max-width:520px){
+      form .row{grid-template-columns:1fr}
+      header{flex-direction:column;align-items:flex-start;gap:6px}
+      h1{font-size:22px}
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>📦 Inventariando Ando</h1>
+        <div class="subtitle">Inventario juvenil · guarda los datos en tu navegador 💾</div>
+      </div>
+      <div>
+        <button class="btn small" onclick="generarInforme()">📊 Ver Informe</button>
+      </div>
+    </header>
 
-    <h1>Inventariando Ando</h1>
+    <div class="card">
+      <form id="form">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">
+          <div style="flex:1">
+            <label>Producto</label>
+            <input id="producto" type="text" placeholder="Ej: Camiseta, Zapatillas, Remera" autocomplete="off">
+          </div>
+          <div style="width:120px">
+            <label>Cantidad</label>
+            <input id="cantidad" type="number" min="1" placeholder="1">
+          </div>
+        </div>
 
-    <div class="container">
+        <div class="row">
+          <div>
+            <label>Talla (opcional)</label>
+            <input id="talla" type="text" placeholder="M, L, 38, S...">
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button type="button" class="btn ghost" onclick="togglePantalon()">👖 Talla pantalón</button>
+          </div>
+        </div>
 
-        <label>Producto:</label>
-        <input id="producto" type="text" placeholder="Ej: Camiseta, Pantalón, Zapatos">
+        <div id="pantalonSection" style="display:none;margin-top:12px">
+          <label>Talla de pantalón (libre)</label>
+          <input id="tallaPantalon" type="text" placeholder="Escribe talla (ej: 6, 28, M, S)">
+        </div>
 
-        <label>Cantidad:</label>
-        <input id="cantidad" type="number" placeholder="Ej: 5">
+        <div class="actions">
+          <button type="button" class="btn" onclick="agregarProducto()">➕ Agregar</button>
+          <button type="button" class="btn ghost" onclick="limpiarInventario()">🧹 Limpiar</button>
+        </div>
 
-        <label>Talla:</label>
-        <input id="talla" type="text" placeholder="Ej: M, L, 38, etc.">
+      </form>
 
-        <button onclick="agregarProducto()">Agregar Producto</button>
-        <button onclick="generarInforme()">Generar Informe</button>
+      <div id="lista"></div>
+
     </div>
 
-    <div id="resultado"></div>
+    <div id="informeContainer" style="margin-top:14px;display:none">
+      <div class="card" id="informe"></div>
+    </div>
+  </div>
 
-    <script>
-        let inventario = [];
+  <script>
+    // estado inicial desde localStorage
+    let inventario = JSON.parse(localStorage.getItem('inventario_v1')) || [];
 
-        function agregarProducto() {
-            let producto = document.getElementById("producto").value.trim().toLowerCase();
-            let cantidad = parseInt(document.getElementById("cantidad").value);
-            let talla = document.getElementById("talla").value.trim();
+    function guardarInventario(){
+      localStorage.setItem('inventario_v1', JSON.stringify(inventario));
+    }
 
-            if (producto === "" || isNaN(cantidad) || talla === "") {
-                alert("Por favor completa todos los campos.");
-                return;
-            }
+    // renderiza lista en la UI
+    function renderLista(){
+      const lista = document.getElementById('lista');
+      lista.innerHTML = '';
+      if(inventario.length===0){
+        lista.innerHTML = '<p style="color:var(--muted);">Aún no hay productos. Agrega uno ✨</p>';
+        return;
+      }
 
-            inventario.push({ 
-                producto: producto,
-                cantidad: cantidad,
-                talla: talla
-            });
+      inventario.forEach((it, idx)=>{
+        const div = document.createElement('div'); div.className='item';
+        const meta = document.createElement('div'); meta.className='meta';
+        const badge = document.createElement('div'); badge.className='badge'; badge.textContent = it.producto.toUpperCase();
+        const info = document.createElement('div'); info.className='info';
+        info.innerHTML = `<strong>${it.cantidad} × ${it.producto}</strong><small>Talla: ${it.talla || '—'} ${it.tallaPantalon? ' | 👖 '+it.tallaPantalon : ''}</small>`;
+        meta.appendChild(badge); meta.appendChild(info);
 
-            alert("Producto agregado correctamente ✔");
-            document.getElementById("producto").value = "";
-            document.getElementById("cantidad").value = "";
-            document.getElementById("talla").value = "";
-        }
+        const tools = document.createElement('div'); tools.className='tools';
+        const del = document.createElement('button'); del.className='tool-btn'; del.textContent='🗑️ Borrar'; del.onclick = ()=>eliminarProducto(idx);
+        const plus = document.createElement('button'); plus.className='tool-btn'; plus.textContent='➕ +1'; plus.onclick = ()=>sumarUno(idx);
+        tools.appendChild(plus); tools.appendChild(del);
 
-        function generarInforme() {
-            if (inventario.length === 0) {
-                alert("No hay productos en el inventario.");
-                return;
-            }
+        div.appendChild(meta); div.appendChild(tools);
+        lista.appendChild(div);
+      });
+    }
 
-            let resumen = {};
+    // agrega producto: si existe (mismo producto+talla+tallaPantalon) suma cantidad
+    function agregarProducto(){
+      const rawProd = document.getElementById('producto').value.trim();
+      const producto = rawProd.toLowerCase();
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      const talla = document.getElementById('talla').value.trim();
+      const tallaPantalon = document.getElementById('tallaPantalon')? document.getElementById('tallaPantalon').value.trim() : '';
 
-            // Agrupar productos ignorando mayúsculas/minúsculas
-            inventario.forEach(item => {
-                let key = item.producto;
+      if(!rawProd || isNaN(cantidad) || cantidad<=0){ alert('⚠️ Completa producto y cantidad válida'); return; }
 
-                if (!resumen[key]) {
-                    resumen[key] = [];
-                }
+      // buscar existente (no discrimina mayúsc/minúsc)
+      const idx = inventario.findIndex(i=> i.producto === producto && (i.talla||'') === (talla||'') && (i.tallaPantalon||'') === (tallaPantalon||''));
+      if(idx >= 0){
+        inventario[idx].cantidad = Number(inventario[idx].cantidad) + Number(cantidad);
+      } else {
+        inventario.push({ producto, cantidad, talla, tallaPantalon });
+      }
 
-                resumen[key].push({
-                    cantidad: item.cantidad,
-                    talla: item.talla
-                });
-            });
+      guardarInventario(); renderLista();
+      document.getElementById('form').reset();
+      document.getElementById('pantalonSection').style.display = 'none';
+    }
 
-            let html = `<h3>Informe del Inventario</h3>`;
-            html += "<ul>";
+    function sumarUno(i){ inventario[i].cantidad = Number(inventario[i].cantidad) + 1; guardarInventario(); renderLista(); }
+    function eliminarProducto(i){ if(confirm('¿Eliminar este producto?')){ inventario.splice(i,1); guardarInventario(); renderLista(); }}
 
-            for (let prod in resumen) {
-                html += `<li><strong>${prod.toUpperCase()}</strong><ul>`;
-                resumen[prod].forEach(x => {
-                    html += `<li>Cantidad: ${x.cantidad} — Talla: ${x.talla}</li>`;
-                });
-                html += "</ul></li>";
-            }
+    function limpiarInventario(){ if(confirm('¿Limpiar todo el inventario?')){ inventario = []; guardarInventario(); renderLista(); document.getElementById('informeContainer').style.display='none'; }}
 
-            html += "</ul>";
+    function togglePantalon(){ const s = document.getElementById('pantalonSection'); s.style.display = s.style.display === 'none' ? 'block' : 'none'; }
 
-            let resultado = document.getElementById("resultado");
-            resultado.innerHTML = html;
-            resultado.style.display = "block";
-        }
-    </script>
+    function generarInforme(){
+      if(inventario.length===0){ alert('📭 Inventario vacío'); return; }
 
+      // agrupar por producto (mayúsc/minúsc no importa porque guardamos lower)
+      const resumen = {};
+      inventario.forEach(it=>{
+        const key = it.producto;
+        if(!resumen[key]) resumen[key]=[];
+        resumen[key].push(it);
+      });
+
+      // construir html
+      let html = '<h2 style="margin-top:0">📊 Informe</h2>';
+      html += '<div>';
+      for(const p in resumen){
+        html += `<div style="margin-bottom:10px"><strong style=\"color:var(--blue)\">${p.toUpperCase()}</strong>`;
+        resumen[p].forEach(entry=>{
+          html += `<div style=\"padding:8px 10px;border-radius:8px;margin-top:6px;background:#fbfdff;border:1px solid #eef7ff\">Cantidad: <strong>${entry.cantidad}</strong> — Talla: <strong>${entry.talla||'—'}</strong> ${entry.tallaPantalon? ' | 👖 '+entry.tallaPantalon : ''}</div>`;
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+
+      const cont = document.getElementById('informe');
+      cont.innerHTML = html;
+      document.getElementById('informeContainer').style.display = 'block';
+      // scroll suave al informe en movil
+      setTimeout(()=>{ document.getElementById('informeContainer').scrollIntoView({behavior:'smooth'}); },100);
+    }
+
+    // init
+    renderLista();
+  </script>
 </body>
 </html>
+
