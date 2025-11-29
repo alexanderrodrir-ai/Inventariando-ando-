@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inventariando Ando</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script> <!-- Incluir la librería de SheetJS -->
   <style>
     :root{
       --blue:#1e88e5;
@@ -66,6 +67,7 @@
       </div>
       <div>
         <button class="btn small" onclick="generarInforme()">📊 Ver Informe</button>
+        <button class="btn small" onclick="descargarExcel()">📥 Descargar Excel</button> <!-- Botón para descargar Excel -->
       </div>
     </header>
 
@@ -149,69 +151,12 @@
       });
     }
 
-    // agrega producto: si existe (mismo producto+talla+tallaPantalon) suma cantidad
+    // agrega producto
     function agregarProducto(){
       const rawProd = document.getElementById('producto').value.trim();
       const producto = rawProd.toLowerCase();
       const cantidad = parseInt(document.getElementById('cantidad').value);
       const talla = document.getElementById('talla').value.trim();
-      const tallaPantalon = document.getElementById('tallaPantalon')? document.getElementById('tallaPantalon').value.trim() : '';
+     
 
-      if(!rawProd || isNaN(cantidad) || cantidad<=0){ alert('⚠️ Completa producto y cantidad válida'); return; }
-
-      // buscar existente (no discrimina mayúsc/minúsc)
-      const idx = inventario.findIndex(i=> i.producto === producto && (i.talla||'') === (talla||'') && (i.tallaPantalon||'') === (tallaPantalon||''));
-      if(idx >= 0){
-        inventario[idx].cantidad = Number(inventario[idx].cantidad) + Number(cantidad);
-      } else {
-        inventario.push({ producto, cantidad, talla, tallaPantalon });
-      }
-
-      guardarInventario(); renderLista();
-      document.getElementById('form').reset();
-      document.getElementById('pantalonSection').style.display = 'none';
-    }
-
-    function sumarUno(i){ inventario[i].cantidad = Number(inventario[i].cantidad) + 1; guardarInventario(); renderLista(); }
-    function eliminarProducto(i){ if(confirm('¿Eliminar este producto?')){ inventario.splice(i,1); guardarInventario(); renderLista(); }}
-
-    function limpiarInventario(){ if(confirm('¿Limpiar todo el inventario?')){ inventario = []; guardarInventario(); renderLista(); document.getElementById('informeContainer').style.display='none'; }}
-
-    function togglePantalon(){ const s = document.getElementById('pantalonSection'); s.style.display = s.style.display === 'none' ? 'block' : 'none'; }
-
-    function generarInforme(){
-      if(inventario.length===0){ alert('📭 Inventario vacío'); return; }
-
-      // agrupar por producto (mayúsc/minúsc no importa porque guardamos lower)
-      const resumen = {};
-      inventario.forEach(it=>{
-        const key = it.producto;
-        if(!resumen[key]) resumen[key]=[];
-        resumen[key].push(it);
-      });
-
-      // construir html
-      let html = '<h2 style="margin-top:0">📊 Informe</h2>';
-      html += '<div>';
-      for(const p in resumen){
-        html += `<div style="margin-bottom:10px"><strong style=\"color:var(--blue)\">${p.toUpperCase()}</strong>`;
-        resumen[p].forEach(entry=>{
-          html += `<div style=\"padding:8px 10px;border-radius:8px;margin-top:6px;background:#fbfdff;border:1px solid #eef7ff\">Cantidad: <strong>${entry.cantidad}</strong> — Talla: <strong>${entry.talla||'—'}</strong> ${entry.tallaPantalon? ' | 👖 '+entry.tallaPantalon : ''}</div>`;
-        });
-        html += '</div>';
-      }
-      html += '</div>';
-
-      const cont = document.getElementById('informe');
-      cont.innerHTML = html;
-      document.getElementById('informeContainer').style.display = 'block';
-      // scroll suave al informe en movil
-      setTimeout(()=>{ document.getElementById('informeContainer').scrollIntoView({behavior:'smooth'}); },100);
-    }
-
-    // init
-    renderLista();
-  </script>
-</body>
-</html>
 
