@@ -82,6 +82,10 @@
             <label>Cantidad</label>
             <input id="cantidad" type="number" min="1" placeholder="1">
           </div>
+          <div style="width:120px">
+            <label>Precio</label>
+            <input id="precio" type="number" min="0" step="0.01" placeholder="Precio del producto">
+          </div>
         </div>
 
         <div class="row">
@@ -138,7 +142,7 @@
         const meta = document.createElement('div'); meta.className='meta';
         const badge = document.createElement('div'); badge.className='badge'; badge.textContent = it.producto.toUpperCase();
         const info = document.createElement('div'); info.className='info';
-        info.innerHTML = `<strong>${it.cantidad} × ${it.producto}</strong><small>Talla: ${it.talla || '—'} ${it.tallaPantalon? ' | 👖 '+it.tallaPantalon : ''}</small>`;
+        info.innerHTML = `<strong>${it.cantidad} × ${it.producto}</strong><small>Talla: ${it.talla || '—'} ${it.tallaPantalon? ' | 👖 '+it.tallaPantalon : ''}</small><br><small>Precio: $${it.precio.toFixed(2)}</small>`;
         meta.appendChild(badge); meta.appendChild(info);
 
         const tools = document.createElement('div'); tools.className='tools';
@@ -157,6 +161,7 @@
       const producto = rawProd.toLowerCase();
       const cantidad = parseInt(document.getElementById('cantidad').value);
       const talla = document.getElementById('talla').value.trim();
-     
+      const precio = parseFloat(document.getElementById('precio').value);
 
-
+      // Validaciones para evitar agregar productos sin datos
+      if (!producto || isNaN(cantidad) || cantidad <=
